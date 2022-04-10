@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 return [
 
@@ -39,9 +39,8 @@ return [
                 'cluster' => env('PUSHER_APP_CLUSTER'),
                 'useTLS' => true,
             ],
-            'client_options' => [
-                // Guzzle client options: https://docs.guzzlephp.org/en/stable/request-options.html
-            ],
+            // Guzzle client options: https://docs.guzzlephp.org/en/stable/request-options.html
+            'client_options' => [],
         ],
 
         'ably' => [
