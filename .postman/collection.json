@@ -1,0 +1,382 @@
+{
+	"info": {
+		"_postman_id": "e1432897-7466-4463-8931-6419bd2475cd",
+		"name": "Laravel JSON API Template",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"item": [
+						{
+							"name": "Login Admin",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{ACCEPT}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "email",
+											"value": "{{ADMIN-EMAIL}}",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "{{ADMIN-PASSWORD}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{HOST}}/auth/login",
+									"host": [
+										"{{HOST}}"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Login User",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "{{ACCEPT}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "email",
+											"value": "{{USER-EMAIL}}",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "{{USER-PASSWORD}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{HOST}}/auth/login",
+									"host": [
+										"{{HOST}}"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"type": "text/javascript",
+								"exec": [
+									"pm.response.to.be.success;",
+									"",
+									"if (pm.collectionVariables.has('ACCESS_TOKEN')) {",
+									"    pm.collectionVariables.set('ACCESS_TOKEN', null);",
+									"}",
+									"",
+									"const parsedResponseBody = JSON.parse(responseBody);",
+									"",
+									"if (parsedResponseBody.hasOwnProperty('access-token')) {",
+									"    pm.collectionVariables.set('ACCESS_TOKEN', parsedResponseBody['access-token']);",
+									"}",
+									""
+								]
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Get user collection",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{ACCEPT}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{HOST}}/users",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "page[number]",
+									"value": "2",
+									"disabled": true
+								},
+								{
+									"key": "page[size]",
+									"value": "5",
+									"disabled": true
+								},
+								{
+									"key": "filter[id][]",
+									"value": "53c5dc8c-d67d-42a7-ae67-680a5fc29bc6",
+									"disabled": true
+								},
+								{
+									"key": "filter[firstName]",
+									"value": "Dan",
+									"disabled": true
+								},
+								{
+									"key": "filter[lastName]",
+									"value": "Leuschke",
+									"disabled": true
+								},
+								{
+									"key": "filter[email]",
+									"value": "francis96@example.org",
+									"disabled": true
+								},
+								{
+									"key": "sort",
+									"value": "-createdAt",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{ACCEPT}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{HOST}}/users/:user",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"users",
+								":user"
+							],
+							"variable": [
+								{
+									"key": "user",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create user",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{ACCEPT}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/vnd.api+json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"data\": {\r\n    \"type\": \"users\",\r\n    \"attributes\": {\r\n      \"firstName\": \"John\",\r\n      \"lastName\": \"Doe\",\r\n      \"email\": \"john.doe@example.com\",\r\n      \"role\": \"user\"\r\n    }\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/users",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update user",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{ACCEPT}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/vnd.api+json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"data\": {\r\n    \"type\": \"users\",\r\n    \"id\": \"\",\r\n    \"attributes\": {\r\n      \"firstName\": \"Jane\",\r\n      \"lastName\": \"Doe\",\r\n      \"email\": \"jane.doe@example.com\",\r\n      \"role\": \"user\"\r\n    }\r\n  }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{HOST}}/users/:user",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"users",
+								":user"
+							],
+							"variable": [
+								{
+									"key": "user",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete user",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "{{ACCEPT}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{HOST}}/users/:user",
+							"host": [
+								"{{HOST}}"
+							],
+							"path": [
+								"users",
+								":user"
+							],
+							"variable": [
+								{
+									"key": "user",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "The User resource"
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{ACCESS_TOKEN}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "ACCEPT",
+			"value": "application/vnd.api+json, application/json;q=0.9",
+			"type": "string"
+		},
+		{
+			"key": "ACCESS_TOKEN",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "CONTENT_TYPE",
+			"value": "application/vnd.api+json",
+			"type": "string"
+		}
+	]
+}
