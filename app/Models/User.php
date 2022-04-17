@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Enums\Attribute;
+use App\Enums\UserRole;
+use App\Models\Concerns\HasUserRole;
 use App\Models\Concerns\UsesUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -10,39 +13,38 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasFactory;
     use HasApiTokens;
+    use HasFactory;
+    use HasUserRole;
     use Notifiable;
     use UsesUuid;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    protected $fillable = [
-        'first_name',
-        'last_name',
-        'email',
-        'password',
-    ];
+    public function getFillable(): array
+    {
+        return array_unique([
+            ...parent::getFillable(),
+            Attribute::FirstName->model(),
+            Attribute::LastName->model(),
+            Attribute::Email->model(),
+            Attribute::Role->model(),
+        ]);
+    }
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+    public function getHidden(): array
+    {
+        return array_unique([
+            ...parent::getHidden(),
+            Attribute::Password->model(),
+            Attribute::RememberToken->model(),
+        ]);
+    }
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+    public function getCasts(): array
+    {
+        return array_unique([
+            ...parent::getCasts(),
+            Attribute::EmailVerifiedAt->model() => 'datetime',
+            Attribute::Role->model() => UserRole::class,
+        ]);
+    }
 }

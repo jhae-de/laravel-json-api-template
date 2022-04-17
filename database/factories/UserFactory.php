@@ -2,39 +2,35 @@
 
 namespace Database\Factories;
 
+use App\Enums\Attribute;
+use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
 /**
  * @extends Factory<User>
  */
 class UserFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
-            'first_name' => $this->faker->firstName(),
-            'last_name' => $this->faker->lastName(),
-            'email' => $this->faker->unique()->safeEmail(),
-            'email_verified_at' => now(),
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
-            'remember_token' => Str::random(10),
+            Attribute::FirstName->model() => $this->faker->firstName(),
+            Attribute::LastName->model() => $this->faker->lastName(),
+            Attribute::Email->model() => $this->faker->unique()->safeEmail(),
+            Attribute::Password->model() => 'password',
+            Attribute::Role->model() => UserRole::User,
         ];
     }
 
-    /**
-     * Indicate that the model's email address should be unverified.
-     */
-    public function unverified(): static
+    public function markEmailAsVerified(): static
     {
-        return $this->state(static fn () => [
-            'email_verified_at' => null,
-        ]);
+        $callback = static function (User $user) {
+            $user->markEmailAsVerified();
+        };
+
+        return $this
+            ->afterMaking($callback)
+            ->afterCreating($callback);
     }
 }

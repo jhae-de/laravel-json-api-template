@@ -1,7 +1,12 @@
 <?php declare(strict_types=1);
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
+use App\Enums\ControllerAction;
+use App\Enums\ResourceType;
+use App\Enums\RouteName;
+use App\JsonApi\V1\Server as JsonApiServer;
+use LaravelJsonApi\Laravel\Facades\JsonApiRoute;
+use LaravelJsonApi\Laravel\Http\Controllers\JsonApiController;
+use LaravelJsonApi\Laravel\Routing\ResourceRegistrar as Server;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,4 +19,28 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', static fn (Request $request) => $request->user());
+JsonApiRoute::server(JsonApiServer::VERSION)
+    ->middleware('auth:sanctum')
+    ->prefix(JsonApiServer::VERSION)
+    ->name('')
+    ->resources(static function (Server $server) {
+        $routes = config('routes.resources', []);
+
+        foreach ($routes as $resourceTypeValue => $route) {
+            $resourceType = ResourceType::from($resourceTypeValue);
+            $controllerActions = $route['controllerActions'] ?? [];
+
+            $resource = $server->resource($resourceType->value, $route['controller'] ?? JsonApiController::class);
+
+            if ($controllerActions) {
+                $controllerActionValues = array_map(
+                    static fn (ControllerAction $controllerAction) => $controllerAction->value,
+                    $controllerActions
+                );
+
+                $resource->only(...$controllerActionValues);
+            }
+
+            $resource->names(RouteName::forResource($resourceType, ...$controllerActions));
+        }
+    });
