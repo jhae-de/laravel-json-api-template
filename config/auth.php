@@ -108,4 +108,18 @@ return [
 
     'password_timeout' => 10800,
 
+    /*
+    |--------------------------------------------------------------------------
+    | Rate Limiter Defaults
+    |--------------------------------------------------------------------------
+    |
+    | This option controls the amount of login attempts for a time window of
+    | given seconds.
+    |
+    */
+
+    'rate_limiter' => [
+        'max_login_attempts' => 5,
+        'decay_seconds' => 60,
+    ],
 ];

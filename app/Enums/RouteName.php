@@ -4,6 +4,8 @@ namespace App\Enums;
 
 enum RouteName: string
 {
+    case AuthLogin = 'auth:login';
+
     case UserList = 'user:list';
     case UserRead = 'user:read';
     case UserCreate = 'user:create';

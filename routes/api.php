@@ -3,7 +3,9 @@
 use App\Enums\ControllerAction;
 use App\Enums\ResourceType;
 use App\Enums\RouteName;
+use App\Http\Controllers\Auth\LoginController;
 use App\JsonApi\V1\Server as JsonApiServer;
+use Illuminate\Support\Facades\Route;
 use LaravelJsonApi\Laravel\Facades\JsonApiRoute;
 use LaravelJsonApi\Laravel\Http\Controllers\JsonApiController;
 use LaravelJsonApi\Laravel\Routing\ResourceRegistrar as Server;
@@ -18,6 +20,11 @@ use LaravelJsonApi\Laravel\Routing\ResourceRegistrar as Server;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+Route::prefix(JsonApiServer::VERSION . '/auth')
+    ->group(static function () {
+        Route::post('/login', LoginController::class)->name(RouteName::AuthLogin->value);
+    });
 
 JsonApiRoute::server(JsonApiServer::VERSION)
     ->middleware('auth:sanctum')
